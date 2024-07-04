@@ -10,59 +10,73 @@ class Inicio extends StatefulWidget {
 }
 
 class _InicioState extends State<Inicio> {
-  TextEditingController nomeController = TextEditingController();
+  //TextEditingController nomeController = TextEditingController();
   String nome = "";
+  String email = "";
 
   void _init() async{
     final prefs = await SharedPreferences.getInstance();
     bool hasData = prefs.containsKey("nome");
-
+    if(!hasData) hasData = prefs.containsKey("email");//Email vai ser obrigatorio
     //Se tem dado ele busca
-    if(hasData) this._recover();
+    if(hasData) _recover();
   }
-
   void _recover() async{
     final prefs = await SharedPreferences.getInstance();
     nome = prefs.getString("nome")!;
+    email = prefs.getString("email")!;
     setState((){});
   }
 
 
-
-  void _save() async{
+  /*void _save() async{
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString("nome", nomeController.text);
 
-  }
+  }*/
   void _remove() async{
     final prefs = await SharedPreferences.getInstance();
     prefs.remove("nome");
-
+    prefs.remove("email");
   }
 
-  void migrar(){
-    if(nome == "") Navigator.pushNamed(context, "login");
-    else Navigator.pushNamed(context, "dashboard");
+
+
+  void navEntrar(context){
+    if(email == "") {
+      Navigator.pushNamed(context, "entrar");
+    } else {
+      Navigator.pushNamed(context, "dashboard");
+    }
+  }
+  void navCadastrar(context){
+    if(email != ""){
+      //Fazer algum alerta na tela
+    }
+    else{
+      Navigator.pushNamed(context, "cadastrar");
+    }
+  }
+  void navPular(context){
+    if(email == ""){
+      Navigator.pushNamed(context, "dashboard");//arguments ...
+    }
+    else{
+      Navigator.pushNamed(context, "dashboard");//arguments ...
+    }
   }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text("Inicio"),),
-      body: const Column(
+      body: Column(
         children: [
-          Text("Bem vindo", ),
-          TextButton(onPressed: migrar, child: Text("Entrar", style: TextStyle(fontSize: 20))),
-          //TextButton(onPressed: onPressed, child: Text("Cadastrar", style: TextStyle(fontSize: 20))),
-          //TextButton(onPressed: onPressed, child: Text("Pular", style: TextStyle(fontSize: 20))),          
-          
+          Text("Bem vindo $nome"),
+          TextButton(onPressed: () => navEntrar(context), child: const Text("Entrar")),
+          TextButton(onPressed: () => navCadastrar(context), child: const Text("Cadastrar")),
+          TextButton(onPressed: () => navPular(context), child: const Text("Pular")),
         ],
       ),
     );
   }
 }
-
-/*
-//TextButton(onPressed: Navigator.push(), child: Text("Entrar", style: TextStyle(fontSize: 20))),
-          //TextButton(onPressed: onPressed, child: Text("Cadastrar", style: TextStyle(fontSize: 20))),
-          //TextButton(onPressed: onPressed, child: Text("Pular", style: TextStyle(fontSize: 20))),
- */
