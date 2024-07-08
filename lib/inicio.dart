@@ -28,7 +28,6 @@ class _InicioState extends State<Inicio> {
     setState((){});
   }
 
-
   /*void _save() async{
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString("nome", nomeController.text);
@@ -39,8 +38,6 @@ class _InicioState extends State<Inicio> {
     prefs.remove("nome");
     prefs.remove("email");
   }
-
-
 
   void navEntrar(context){
     if(email == "") {
@@ -68,14 +65,72 @@ class _InicioState extends State<Inicio> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Inicio"),),
-      body: Column(
-        children: [
-          Text("Bem vindo $nome"),
-          TextButton(onPressed: () => navEntrar(context), child: const Text("Entrar")),
-          TextButton(onPressed: () => navCadastrar(context), child: const Text("Cadastrar")),
-          TextButton(onPressed: () => navPular(context), child: const Text("Pular")),
-        ],
+      appBar: AppBar(title: const Text("Games Tracker",
+        style: TextStyle(
+          color: Colors.white
+        ),),
+      backgroundColor: const Color.fromARGB(255, 61, 2, 71),),
+      body: Center(
+        child: Column(
+          children: [
+            const SizedBox(height: 100.0),
+            Text("Seja bem vindo(a), $nome!",
+            style: const TextStyle(
+              fontSize: 35.0
+            ),),
+            const SizedBox(height: 90.0),
+            TextButton(
+              onPressed: () => navEntrar(context),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color.fromARGB(255, 61, 2, 71),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 16.0),
+                textStyle: const TextStyle(
+                  fontSize: 20.0
+                )
+              ),
+              child: const Text("Entrar",
+                style: TextStyle(
+                  color: Colors.white))
+            ),
+            const SizedBox(height: 40.0),
+            TextButton(
+              onPressed: () => navCadastrar(context),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color.fromARGB(255, 61, 2, 71),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 16.0),
+                textStyle: const TextStyle(
+                  fontSize: 20.0
+                )
+              ),
+              child: const Text("Cadastrar",
+                style: TextStyle(
+                  color: Colors.white))
+            ),
+            const SizedBox(height: 40.0),
+            TextButton(
+              onPressed: () => navPular(context),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color.fromARGB(255, 61, 2, 71),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 16.0),
+                textStyle: const TextStyle(
+                  fontSize: 20.0
+                )
+              ),
+              child: const Text("Pular",
+                style: TextStyle(
+                  color: Colors.white))
+            ),
+          ],
+        )
       ),
     );
   }
