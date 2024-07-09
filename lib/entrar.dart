@@ -14,7 +14,7 @@ class _EntrarState extends State<Entrar> {
   TextEditingController password = TextEditingController();
 
 
-  void navDashboard(context) async {
+  void navDashboard(BuildContext context) async {
     if(mail.text.isNotEmpty && password.text.isNotEmpty){
       String mailConsulta = "";//consultar no Banco aqui
       String passwordConsulta = "";//consultar no Banco aqui

@@ -1,3 +1,5 @@
+// ignore: depend_on_referenced_packages
+import "package:shared_preferences/shared_preferences.dart";
 import 'package:flutter/material.dart';
 
 class Dashboard extends StatefulWidget {
@@ -8,8 +10,144 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
+  String id = "";
+
+  void _init() async{
+    final prefs = await SharedPreferences.getInstance();
+    //Testa se tem nome e id salvos
+    bool hasData = prefs.containsKey("id");
+    //Se tem dado ele busca
+    if(hasData) id = prefs.getString("id")!;
+  }
+
+
+  void _inicio(BuildContext context) async{
+    final prefs = await SharedPreferences.getInstance();
+    if(prefs.containsKey("id")){
+      prefs.remove("id");
+      prefs.remove("nome");
+
+      String title = "Usuario Deslogado.";
+      String message = "Clique em ok para retornar";
+      alerta(context, title, message);
+    } else {
+      String title = "Voce nao entrou.";
+      String message = "Retornando ao inicio";
+      alerta(context, title, message);
+    }
+    Navigator.pop(context, "inicio");
+  }
+
+  void _filtrar(BuildContext context){
+    Navigator.pushNamed(context, "filtrar");
+  }
+
+  void _novoJogo(BuildContext context){
+    if(id == ""){
+      String title = "Usuario nao autenticado.";
+      String message = "Retorne ao Inicio para se autenticar!";
+      alerta(context, title, message);
+      return;
+    }
+    Navigator.pushNamed(context, "novoJogo");
+  }
+
+  void _recentes(BuildContext context){
+    Navigator.pushNamed(context, "recentes");
+  }
+
+  void _detalhes(BuildContext context){
+    Navigator.pushNamed(context, "detalhes");
+  }
+
+  void alerta(BuildContext context, String title, String message){
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(message),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+
+
+
+  //Alterei o escopo dos botoes aqui!
+
+  Widget botaoAdicionar(context) {
+    return ElevatedButton(
+      onPressed: () =>  _novoJogo(context),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.transparent,
+        shadowColor: Colors.transparent,
+        padding: EdgeInsets.zero,
+      ),
+      child: Image.asset('images/adicionar.png',
+        width: 60,
+        height: 58,
+      )
+    );
+  }
+
+  Widget botaoDeslogar(context){
+    return ElevatedButton(
+      onPressed: () =>  _inicio(context),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.transparent,
+        shadowColor: Colors.transparent,
+        padding: EdgeInsets.zero,
+      ),
+      child: Image.asset('images/deslogar.png',
+        width: 53,
+        height: 50,
+      )
+    );
+  }
+
+  Widget botaoFiltrar(context){
+    return ElevatedButton(
+      onPressed: () =>  _filtrar(context),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.transparent,
+        shadowColor: Colors.transparent,
+        padding: EdgeInsets.zero,
+      ),
+      child: Image.asset('images/filtrar.png',
+        width: 52,
+        height: 54,
+      )
+    );
+  }
+
+  Widget botaoRecentes(context){
+    return ElevatedButton(
+      onPressed: () =>  _recentes(context),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.transparent,
+        shadowColor: Colors.transparent,
+        padding: EdgeInsets.zero,
+      ),
+      child: Image.asset('images/recentes.png',
+        width: 58,
+        height: 58,
+      )
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    _init();
     return Scaffold(
         appBar: AppBar(
       title: const Text(
@@ -45,60 +183,3 @@ class _DashboardState extends State<Dashboard> {
   }
 }
 
-Widget botaoAdicionar(context) {
-  return ElevatedButton(
-    onPressed: () =>  Navigator.pushNamed(context, "novoJogo"),
-    style: ElevatedButton.styleFrom(
-      backgroundColor: Colors.transparent,
-      shadowColor: Colors.transparent,
-      padding: EdgeInsets.zero,
-    ),
-    child: Image.asset('images/adicionar.png',
-      width: 60,
-      height: 58,));
-}
-
-Widget botaoDeslogar(context){
-  return ElevatedButton(
-    onPressed: () =>  Navigator.pop(context, "inicio"),
-    style: ElevatedButton.styleFrom(
-      backgroundColor: Colors.transparent,
-      shadowColor: Colors.transparent,
-      padding: EdgeInsets.zero,
-    ),
-    child: Image.asset('images/deslogar.png',
-      width: 53,
-      height: 50,
-    )
-  );
-}
-
-Widget botaoFiltrar(context){
-  return ElevatedButton(
-    onPressed: () =>  Navigator.pushNamed(context, "filtrar"),
-    style: ElevatedButton.styleFrom(
-      backgroundColor: Colors.transparent,
-      shadowColor: Colors.transparent,
-      padding: EdgeInsets.zero,
-    ),
-    child: Image.asset('images/filtrar.png',
-      width: 52,
-      height: 54,
-    )
-  );
-}
-
-Widget botaoRecentes(context){
-  return ElevatedButton(
-    onPressed: () =>  Navigator.pushNamed(context, "recentes"),
-    style: ElevatedButton.styleFrom(
-      backgroundColor: Colors.transparent,
-      shadowColor: Colors.transparent,
-      padding: EdgeInsets.zero,
-    ),
-    child: Image.asset('images/recentes.png',
-      width: 58,
-      height: 58,
-    )
-  );
-}

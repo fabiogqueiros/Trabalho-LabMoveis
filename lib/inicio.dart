@@ -52,7 +52,7 @@ class _InicioState extends State<Inicio> {
   }
 
   
-  void navEntrar(context){
+  void navEntrar(BuildContext context){
     if(id == "") {
       Navigator.pushNamed(context, "entrar");
     } else {
@@ -60,7 +60,7 @@ class _InicioState extends State<Inicio> {
     }
   }
 
-  void navCadastrar(context){
+  void navCadastrar(BuildContext context){
     if(id == ""){
       Navigator.pushNamed(context, "cadastrar");
     }
@@ -71,7 +71,7 @@ class _InicioState extends State<Inicio> {
     }
   }
 
-  void navPular(context){
+  void navPular(BuildContext context){
     if(id == ""){
       Navigator.pushNamed(context, "dashboard");
     }
