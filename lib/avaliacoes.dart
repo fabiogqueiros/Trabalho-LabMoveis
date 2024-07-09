@@ -32,11 +32,11 @@ class _AvaliacoesState extends State<Avaliacoes> {
               Map<String, Map>? avaliacoes = snapshot.data;
               
               return ListView.builder(itemBuilder: (context, index){
-                Map<String, int> avalia = avaliacoes![index];
-                return Row(children: [
-                  Text(index.toString()),
-                  Text(avalia[index])
-                ]);
+                // Map<String, int> avalia = avaliacoes![index];
+                // return Row(children: [
+                //   Text(index.toString()),
+                //   Text(avalia[index])
+                // ]);
               });
 
             }
