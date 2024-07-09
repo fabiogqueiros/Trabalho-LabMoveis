@@ -20,7 +20,6 @@ class _InicioState extends State<Inicio> {
     if(!hasData) hasData = prefs.containsKey("id");
     //Se tem dado ele busca
     if(hasData) _recover();
-    else nome = "";
   }
 
 
@@ -32,9 +31,27 @@ class _InicioState extends State<Inicio> {
   }
 
   
+  void alerta(BuildContext context, String title, String message){
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(message),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   
-
   void navEntrar(context){
     if(id == "") {
       Navigator.pushNamed(context, "entrar");
@@ -48,16 +65,18 @@ class _InicioState extends State<Inicio> {
       Navigator.pushNamed(context, "cadastrar");
     }
     else{
-      //Fazer algum alerta na tela
+      String title = "Usuario ja identificado";
+      String message = "Clique em no botão de Entrar";
+      alerta(context, title, message);
     }
   }
 
   void navPular(context){
     if(id == ""){
-      Navigator.pushNamed(context, "dashboard");//arguments ...
+      Navigator.pushNamed(context, "dashboard");
     }
     else{
-      Navigator.pushNamed(context, "dashboard");//arguments ...
+      Navigator.pushNamed(context, "dashboard");
     }
   }
 

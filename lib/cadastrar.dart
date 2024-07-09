@@ -1,5 +1,6 @@
+// ignore: depend_on_referenced_packages
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
-//import 'package:flutter/widgets.dart';
 
 class Cadastrar extends StatefulWidget {
   const Cadastrar({super.key});
@@ -13,20 +14,55 @@ class _CadastrarState extends State<Cadastrar> {
   TextEditingController mail = TextEditingController();
   TextEditingController password = TextEditingController();
 
-  void _save(context) {
+  void _cadastrar(context) {
     if (name.text.isEmpty && mail.text.isEmpty && password.text.isEmpty) {
-      //Alert ...
-    } else {
-      //Confere primeiro se ninguem tem aquele email cadastrado
+      if(checaCadastro(mail.text)){
+        String title = "Usuario ja existente";
+        String message = "Email invalido";
+        alerta(context, title, message);
+        return;
+      }
 
-      //object.email = "Email da Pessoa"
-      //object.nome = "Nome da Pessoa"
-      //Salvar no BD
+      //Salvar aqui no banco de dados
+      //bd.save(mail, password, name)
+      String id = "";//Recuperar do banco de dados o id
+      _save(name.text, id);
+    } else {
+      String title = "Campo(s) vazio(s)";
+      String message = "Preencha todos os campos do cadastro!";
+      alerta(context, title, message);
     }
   }
 
-  bool checaCadastro() {
-    return true;
+  void _save(String nome, String id) async{
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString("nome", nome);
+    await prefs.setString("id", id);
+  }
+
+  void alerta(BuildContext context, String title, String message){
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(message),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  bool checaCadastro(String email) {//Retorna verdadeiro se ja existe usuario
+    bool resp = true;//Fazer a logica do banco de dados
+    return resp;
   }
 
   @override
@@ -108,7 +144,7 @@ class _CadastrarState extends State<Cadastrar> {
             // ElevatedButton(onPressed: () => {_save(context)}, child: const Text("Salvar")),
             const SizedBox(height: 55.0),
             TextButton(
-                onPressed: () => {_save(context)},
+                onPressed: () => {_cadastrar(context)},
                 style: ElevatedButton.styleFrom(
                     backgroundColor: const Color.fromARGB(255, 61, 2, 71),
                     shape: RoundedRectangleBorder(
