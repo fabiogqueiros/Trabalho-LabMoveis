@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import "package:shared_preferences/shared_preferences.dart";
 
 class Entrar extends StatefulWidget {
   const Entrar({super.key});
@@ -24,6 +25,14 @@ class _EntrarState extends State<Entrar> {
       //Alert
     }
   }
+
+  void _save() async{
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString("nome", nomeController.text);
+
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

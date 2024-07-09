@@ -10,60 +10,60 @@ class Inicio extends StatefulWidget {
 }
 
 class _InicioState extends State<Inicio> {
-  //TextEditingController nomeController = TextEditingController();
   String nome = "";
-  String email = "";
+  String id = "";
 
   void _init() async{
     final prefs = await SharedPreferences.getInstance();
+    //Testa se tem nome e id salvos
     bool hasData = prefs.containsKey("nome");
-    if(!hasData) hasData = prefs.containsKey("email");//Email vai ser obrigatorio
+    if(!hasData) hasData = prefs.containsKey("id");
     //Se tem dado ele busca
     if(hasData) _recover();
+    else nome = "";
   }
+
+
   void _recover() async{
     final prefs = await SharedPreferences.getInstance();
     nome = prefs.getString("nome")!;
-    email = prefs.getString("email")!;
+    id = prefs.getString("id")!;
     setState((){});
   }
 
-  /*void _save() async{
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString("nome", nomeController.text);
+  
 
-  }*/
-  void _remove() async{
-    final prefs = await SharedPreferences.getInstance();
-    prefs.remove("nome");
-    prefs.remove("email");
-  }
+  
 
   void navEntrar(context){
-    if(email == "") {
+    if(id == "") {
       Navigator.pushNamed(context, "entrar");
     } else {
       Navigator.pushNamed(context, "dashboard");
     }
   }
+
   void navCadastrar(context){
-    if(email != ""){
-      //Fazer algum alerta na tela
-    }
-    else{
+    if(id == ""){
       Navigator.pushNamed(context, "cadastrar");
     }
+    else{
+      //Fazer algum alerta na tela
+    }
   }
+
   void navPular(context){
-    if(email == ""){
+    if(id == ""){
       Navigator.pushNamed(context, "dashboard");//arguments ...
     }
     else{
       Navigator.pushNamed(context, "dashboard");//arguments ...
     }
   }
+
   @override
   Widget build(BuildContext context) {
+    _init();
     return Scaffold(
       appBar: AppBar(title: const Text("Games Tracker",
         style: TextStyle(

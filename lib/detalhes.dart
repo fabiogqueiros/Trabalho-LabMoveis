@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import "package:shared_preferences/shared_preferences.dart";
 
 class Detalhes extends StatefulWidget {
   const Detalhes({super.key});
@@ -19,6 +20,14 @@ class _DetalhesState extends State<Detalhes> {
     Navigator.pushNamed(context, "avaliar");
   }
   
+
+  void _remove() async{
+    final prefs = await SharedPreferences.getInstance();
+    prefs.remove("nome");
+    prefs.remove("id");
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
