@@ -2,7 +2,6 @@
 import 'dart:async';
 
 // ignore: depend_on_referenced_packages
-import 'package:flutter/widgets.dart';
 import "package:shared_preferences/shared_preferences.dart";
 import 'package:flutter/material.dart';
 
@@ -15,7 +14,6 @@ class Dashboard extends StatefulWidget {
 
 class _DashboardState extends State<Dashboard> {
   String id = "";
-  Map<String, int> jogos = {};
   ListView? widgetLista = ListView();
 
   void getAutentica() async{
@@ -27,6 +25,7 @@ class _DashboardState extends State<Dashboard> {
   }
 
   Future<ListView>? getJogos() async{
+    Map<String, int> jogos = {};
     //Manipular aqui a lista de jogos, atualizando utilizando o banco com os parametros recebidos
     if(jogos.isEmpty) const Text("Nenhum jogo disponivel.");
     

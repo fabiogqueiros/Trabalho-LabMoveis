@@ -8,10 +8,10 @@ class Recentes extends StatefulWidget {
 }
 
 class _RecentesState extends State<Recentes> {
-  Map<String, int> jogos = {};
   ListView? widgetLista = ListView();
 
   Future<ListView>? getJogos() async{
+    Map<String, int> jogos = {};
     //Manipular aqui a lista de jogos, atualizando utilizando o banco com os parametros recebidos
     if(jogos.isEmpty) const Text("Nenhum jogo disponivel.");
     
