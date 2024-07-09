@@ -1,4 +1,8 @@
 // ignore: depend_on_referenced_packages
+import 'dart:async';
+
+// ignore: depend_on_referenced_packages
+import 'package:flutter/widgets.dart';
 import "package:shared_preferences/shared_preferences.dart";
 import 'package:flutter/material.dart';
 
@@ -11,13 +15,23 @@ class Dashboard extends StatefulWidget {
 
 class _DashboardState extends State<Dashboard> {
   String id = "";
+  Map<String, int> jogos = {};
+  ListView? widgetLista = ListView();
 
-  void _init() async{
+  void getAutentica() async{
     final prefs = await SharedPreferences.getInstance();
     //Testa se tem nome e id salvos
     bool hasData = prefs.containsKey("id");
     //Se tem dado ele busca
     if(hasData) id = prefs.getString("id")!;
+  }
+
+  Future<ListView>? getJogos() async{
+    //Manipular aqui a lista de jogos, atualizando utilizando o banco com os parametros recebidos
+    if(jogos.isEmpty) const Text("Nenhum jogo disponivel.");
+    
+    return await ListView(children: jogos.entries.map((jog) => Row(children: [Text(jog.key), Text(jog.value.toString())],)).toList(),);
+
   }
 
 
@@ -39,7 +53,12 @@ class _DashboardState extends State<Dashboard> {
   }
 
   void _filtrar(BuildContext context){
-    Navigator.pushNamed(context, "filtrar");
+    Navigator.pushNamed(context, "filtrar").then((value){//Ele retorna aqui o argumento
+
+      //Manipular aqui a lista de jogos, atualizar utilizando o banco com os parametros recebidos
+      widgetLista = getJogos() as ListView;
+      setState(() {});
+    } );
   }
 
   void _novoJogo(BuildContext context){
@@ -147,7 +166,9 @@ class _DashboardState extends State<Dashboard> {
 
   @override
   Widget build(BuildContext context) {
-    _init();
+    
+    widgetLista = getJogos() as ListView;
+
     return Scaffold(
         appBar: AppBar(
       title: const Text(
@@ -163,6 +184,9 @@ class _DashboardState extends State<Dashboard> {
             Column(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
+                Container(
+                  child: widgetLista,
+                ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
