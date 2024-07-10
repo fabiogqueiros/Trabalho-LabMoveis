@@ -24,14 +24,14 @@ class _DashboardState extends State<Dashboard> {
     if(hasData) id = prefs.getString("id")!;
   }
 
-  Future<ListView>? getJogos() async{
-    Map<String, int> jogos = {};
-    //Manipular aqui a lista de jogos, atualizando utilizando o banco com os parametros recebidos
-    if(jogos.isEmpty) const Text("Nenhum jogo disponivel.");
+  // Future<ListView>? getJogos() async{
+  //   Map<String, int> jogos = {};
+  //   //Manipular aqui a lista de jogos, atualizando utilizando o banco com os parametros recebidos
+  //   if(jogos.isEmpty) const Text("Nenhum jogo disponivel.");
     
-    return await ListView(children: jogos.entries.map((jog) => Row(children: [Text(jog.key), Text(jog.value.toString())],)).toList(),);
+  //   return await ListView(children: jogos.entries.map((jog) => Row(children: [Text(jog.key), Text(jog.value.toString())],)).toList(),);
 
-  }
+  // }
 
 
   void _inicio(BuildContext context) async{
@@ -55,18 +55,18 @@ class _DashboardState extends State<Dashboard> {
     Navigator.pushNamed(context, "filtrar").then((value){//Ele retorna aqui o argumento
 
       //Manipular aqui a lista de jogos, atualizar utilizando o banco com os parametros recebidos
-      widgetLista = getJogos() as ListView;
+     // widgetLista = getJogos() as ListView;
       setState(() {});
     } );
   }
 
   void _novoJogo(BuildContext context){
-    if(id == ""){
-      String title = "Usuario nao autenticado.";
-      String message = "Retorne ao Inicio para se autenticar!";
-      alerta(context, title, message);
-      return;
-    }
+    // if(id == ""){
+    //   String title = "Usuario nao autenticado.";
+    //   String message = "Retorne ao Inicio para se autenticar!";
+    //   alerta(context, title, message);
+    //   return;
+    // }
     Navigator.pushNamed(context, "novoJogo");
   }
 
@@ -166,7 +166,7 @@ class _DashboardState extends State<Dashboard> {
   @override
   Widget build(BuildContext context) {
     
-    widgetLista = getJogos() as ListView;
+   // widgetLista = getJogos() as ListView;
 
     return Scaffold(
         appBar: AppBar(

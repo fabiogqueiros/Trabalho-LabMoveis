@@ -15,29 +15,29 @@ class _EntrarState extends State<Entrar> {
 
 
   void navDashboard(BuildContext context) async {
-    if(mail.text.isNotEmpty && password.text.isNotEmpty){
-      String mailConsulta = "";//consultar no Banco aqui
-      String passwordConsulta = "";//consultar no Banco aqui
-      String nome = "";//consultar no Banco aqui
-      String id = "";//consultar no Banco aqui
+    // if(mail.text.isNotEmpty && password.text.isNotEmpty){
+    //   String mailConsulta = "";//consultar no Banco aqui
+    //   String passwordConsulta = "";//consultar no Banco aqui
+    //   String nome = "";//consultar no Banco aqui
+    //   String id = "";//consultar no Banco aqui
 
-      // ignore: unrelated_type_equality_checks
-      if(mailConsulta != mail || passwordConsulta != password){
-        String title = "Email ou senha errado";
-        String message = "Preencha corretamente o email ou senha";
-        alerta(context, title, message);
-        return;
-      }
+    //   // ignore: unrelated_type_equality_checks
+    //   if(mailConsulta != mail || passwordConsulta != password){
+    //     String title = "Email ou senha errado";
+    //     String message = "Preencha corretamente o email ou senha";
+    //     alerta(context, title, message);
+    //     return;
+    //   }
 
-      //Email e senha estao corretos
-      _save(nome, id);
+    //   //Email e senha estao corretos
+    //   _save(nome, id);
       Navigator.pushNamed(context, "dashboard");
-    }
-    else{
-      String title = "Campo Vazio";
-      String message = "Preencha todos os campos";
-      alerta(context, title, message);
-    }
+    // }
+    // else{
+    //   String title = "Campo Vazio";
+    //   String message = "Preencha todos os campos";
+    //   alerta(context, title, message);
+    // }
   }
 
   void alerta(BuildContext context, String title, String message){

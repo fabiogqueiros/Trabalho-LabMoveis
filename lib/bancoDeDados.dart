@@ -51,6 +51,7 @@ class BancoDados {
   }
 
   /* funções do crud */
+  // insere
   Future<void> insereUser(String nome, String email, String password) async {
     final bd = banco;
     Map<String, dynamic> user = {
@@ -70,13 +71,13 @@ class BancoDados {
   }
 
   Future<void> insereGame(
-      int userId, String name, String description, String release_date) async {
+      int userId, String name, String description, String releaseDate) async {
     final bd = banco;
     Map<String, dynamic> game = {
       'user_id': userId,
       'name': name,
       'description': description,
-      'release_date': release_date
+      'release_date': releaseDate
     };
     await bd?.insert('game', game,
         conflictAlgorithm: ConflictAlgorithm.replace);
@@ -99,6 +100,63 @@ class BancoDados {
       'description': description,
       'date': date
     };
-    await bd?.insert('review', review, conflictAlgorithm: ConflictAlgorithm.replace);
+    await bd?.insert('review', review,
+        conflictAlgorithm: ConflictAlgorithm.replace);
+  }
+
+  // gets
+  // retorna senha e usuário - login
+  Future<Map<String, dynamic>?> getUserLogin(
+      String name, String email, String password) async {
+    final bd = banco;
+    String script = 'name = ? AND email = ? AND password = ?';
+    List<Map<String, dynamic>> user = await bd!
+        .query('user', where: script, whereArgs: [name, email, password]);
+
+    if (user.isNotEmpty) {
+      return user.first;
+    } else {
+      return null;
+    }
+  }
+
+  // retorna id do usuário
+  Future<List<int>?> getUserId() async {
+    final bd = banco;
+    final results = await bd!.query('user', columns: ['id']);
+    final ids = results.map((row) => row['id'] as int).toList();
+
+    if (ids.isNotEmpty) {
+      return ids;
+    } else {
+      return null;
+    }
+  }
+
+  // retorna descrição do jogo
+  Future<Map<String, dynamic>> getDescriptionGame(int id, String name) async {
+    final bd = banco;
+    String script = 'id = ? AND name = ?';
+    List<Map<String, dynamic>> description = await bd!.query('game',
+        columns: ['description'], where: script, whereArgs: [id, name]);
+
+    return description.first;
+  }
+
+  // retorna os comentários sobre o jogo
+  Future<List<Map<String, dynamic>>?> getDescriptionReview(
+      int id, String name) async {
+    final bd = banco;
+    String script = 'id = ? AND name = ?';
+    List<Map<String, dynamic>> description = await bd!.query('review',
+        columns: ['description', 'score'],
+        where: script,
+        whereArgs: [id, name]);
+
+    if (description.isNotEmpty) {
+      return description;
+    } else {
+      return null;
+    }
   }
 }
