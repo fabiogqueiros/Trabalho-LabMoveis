@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 class Recentes extends StatefulWidget {
   const Recentes({super.key});
@@ -8,22 +9,29 @@ class Recentes extends StatefulWidget {
 }
 
 class _RecentesState extends State<Recentes> {
-  ListView? widgetLista = ListView();
+  Widget? widgetLista;
 
-  Future<ListView>? getJogos() async{
+  void getJogos() {
+    //Map<String, int> jogos = {"Asphalt": 89, "GTA" : 90};
     Map<String, int> jogos = {};
     //Manipular aqui a lista de jogos, atualizando utilizando o banco com os parametros recebidos
-    if(jogos.isEmpty) const Text("Nenhum jogo disponivel.");
+    if(jogos.isEmpty){
+      widgetLista = const Text("Nao ha jogos disponiveis");
+      return;
+    }
     
-    ListView temp = await ListView(children: jogos.entries.map((jog) => Row(children: [Text(jog.key), Text(jog.value.toString())],)).toList(),);
+    widgetLista = ListView(children: jogos.entries.map((jog) => Row(children: [
+      Text(jog.key), Text(jog.value.toString())
+      
+      ],)).toList(),
+    );
     setState(() {});
-    return temp;
   }
 
 
   @override
   Widget build(BuildContext context) {
-    //widgetLista = getJogos() as ListView;
+    getJogos();
 
     return Scaffold(appBar: AppBar(title: const Text("Recentes"),),
       body: widgetLista

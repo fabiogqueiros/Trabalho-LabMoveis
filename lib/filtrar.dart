@@ -16,15 +16,15 @@ class _FiltrarState extends State<Filtrar> {
   double estrelas = 0;
 
   void _dashboard(BuildContext context){
-    if(tipo != null && duracaoMinutes.text.isNotEmpty){
+    if(tipo == null || duracaoMinutes.text.isEmpty){
       String title = "Campo(s) vazio(s)";
       String message = "Preencha todos os campos corretamente";
       alerta(context, title, message);
       return;
     }
-    argument.duracao = int.parse(duracaoMinutes.text);
+    /*argument.duracao = int.parse(duracaoMinutes.text);
     argument.estrelas = estrelas;
-    argument.tipo = tipo!;
+    argument.tipo = tipo!;*/
     Navigator.pop(context, argument);
   }
 
@@ -55,10 +55,9 @@ class _FiltrarState extends State<Filtrar> {
       AppBar(title: const Text("Filtrar"),),
       body: Column(children: [
         
-        DropdownButton(value: tipo,
-          items: tipos.map<DropdownMenuItem<String>>((tip){
-            return DropdownMenuItem<String>(child: Text(tip));}).toList(),
-          onChanged: (tip) {
+        DropdownButton(items: tipos.map((String valor) => DropdownMenuItem<String>(value: valor, child: Text(valor),)).toList(), 
+          value: tipo,
+          onChanged: (String? tip){
             tipo = tip;
             setState(() {});
           },

@@ -78,7 +78,10 @@ class _NovoJogoState extends State<NovoJogo> {
         ),
 
 
-        ElevatedButton(onPressed: () => _dashboard(context), child: const Text("Salvar"))
+        ElevatedButton(onPressed: (){
+          _dashboard(context);
+        },
+         child: const Text("Salvar"))
       ],)
     
     );
