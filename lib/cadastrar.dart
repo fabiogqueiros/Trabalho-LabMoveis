@@ -1,6 +1,7 @@
 // ignore: depend_on_referenced_packages
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
+import 'bancoDeDados.dart';
 
 class Cadastrar extends StatefulWidget {
   const Cadastrar({super.key});
@@ -13,6 +14,7 @@ class _CadastrarState extends State<Cadastrar> {
   TextEditingController name = TextEditingController();
   TextEditingController mail = TextEditingController();
   TextEditingController password = TextEditingController();
+  BancoDados bd = BancoDados.getBanco();
 
   void _cadastrar(BuildContext context) {
     if (name.text.isNotEmpty && mail.text.isNotEmpty && password.text.isNotEmpty) {
@@ -23,9 +25,8 @@ class _CadastrarState extends State<Cadastrar> {
         alerta(context, title, message);
         return;
       }
-
-      //Salvar aqui no banco de dados
-      //bd.save(mail, password, name)
+      bd.insereUser(name.text, mail.text, password.text);
+      
       String id = "";//Recuperar do banco de dados o id
       _save(name.text, id);
     } else {

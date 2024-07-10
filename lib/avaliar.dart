@@ -70,7 +70,9 @@ class _AvaliarState extends State<Avaliar> {
             estrelas = value;
             setState(() {});
           },
-        ),
+      ),
+
+      TextButton(onPressed: () => salvar(context), child: const Text("Salvar")),
     ],),
     );
   }

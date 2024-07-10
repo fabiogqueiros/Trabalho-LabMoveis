@@ -3,7 +3,7 @@ import 'package:path/path.dart';
 
 class BancoDados {
   // atributo privado e estático do banco de dados
-  static final BancoDados instancia = BancoDados._();
+  static BancoDados instancia = BancoDados._();
   static Database? banco; // variavel do banco de dados
 
   // construtor privado
@@ -15,19 +15,21 @@ class BancoDados {
   }
 
   // metodo get banco
-  Future<Database> getBanco() async {
-    if (banco != null) return banco!;
-    banco = await iniciaBanco();
-    return banco!;
+  static BancoDados getBanco() {
+    if(banco == null) banco = iniciaBanco() as Database;//Erro aqui!!!!!!!!!
+
+    if (instancia != null) return instancia;
+    instancia = BancoDados();
+    return instancia;
   }
 
   // configura a foreign key
-  Future<void> foreignKey(Database bd) async {
+  static Future<void> foreignKey(Database bd) async {
     await bd.execute('PRAGMA foreign_keys = ON');
   }
 
   // metodo que inicia o banco de dados
-  Future<Database> iniciaBanco() async {
+  static Future<Database> iniciaBanco() async {
     String caminho = join(await getDatabasesPath(), 'gamesTracker.db');
     const String scriptUser =
         "CREATE TABLE user(id INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR NOT NULL, email VARCHAR NOT NULL, password VARCHAR NOT NULL);";

@@ -15,7 +15,8 @@ class _InicioState extends State<Inicio> {
   String nome = "";
   String? id;
 
-  late Future<Database> bancoDados;
+  // late Future<Database> bancoDados;
+  final bd = BancoDados.getBanco();
 
   // essa função é responsável por criar o banco de dados
   // void banco(){

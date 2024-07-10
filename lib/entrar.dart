@@ -1,6 +1,8 @@
 // ignore: depend_on_referenced_packages
+import 'package:af_trabalhofinal/bancoDeDados.dart';
 import "package:shared_preferences/shared_preferences.dart";
 import 'package:flutter/material.dart';
+import 'package:sqflite/sqflite.dart';
 
 class Entrar extends StatefulWidget {
   const Entrar({super.key});
@@ -12,32 +14,34 @@ class Entrar extends StatefulWidget {
 class _EntrarState extends State<Entrar> {
   TextEditingController mail = TextEditingController();
   TextEditingController password = TextEditingController();
+  BancoDados bd = BancoDados.getBanco() as BancoDados;
 
 
   void navDashboard(BuildContext context) async {
-    // if(mail.text.isNotEmpty && password.text.isNotEmpty){
-    //   String mailConsulta = "";//consultar no Banco aqui
-    //   String passwordConsulta = "";//consultar no Banco aqui
-    //   String nome = "";//consultar no Banco aqui
-    //   String id = "";//consultar no Banco aqui
+    if(mail.text.isNotEmpty && password.text.isNotEmpty){
+      String mailConsulta = "";//consultar no Banco aqui
+      String passwordConsulta = "";//consultar no Banco aqui
+      String nome = "";//consultar no Banco aqui
+      String id = "";//consultar no Banco aqui
 
-    //   // ignore: unrelated_type_equality_checks
-    //   if(mailConsulta != mail || passwordConsulta != password){
-    //     String title = "Email ou senha errado";
-    //     String message = "Preencha corretamente o email ou senha";
-    //     alerta(context, title, message);
-    //     return;
-    //   }
-
-    //   //Email e senha estao corretos
-    //   _save(nome, id);
+      // ignore: unrelated_type_equality_checks
+      if(mailConsulta != mail || passwordConsulta != password){
+        String title = "Email ou senha errado";
+        String message = "Preencha corretamente o email ou senha";
+        alerta(context, title, message);
+        return;
+      }
+      
+      //Email e senha estao corretos
+      _save(nome, id);
       Navigator.pushNamed(context, "dashboard");
-    // }
-    // else{
-    //   String title = "Campo Vazio";
-    //   String message = "Preencha todos os campos";
-    //   alerta(context, title, message);
-    // }
+    }
+    else{
+      String title = "Campo Vazio";
+      String message = "Preencha todos os campos";
+      //alerta(context, title, message);
+      Navigator.pushNamed(context, "detalhes");
+    }
   }
 
   void alerta(BuildContext context, String title, String message){
