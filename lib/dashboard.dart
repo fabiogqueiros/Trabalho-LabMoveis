@@ -13,7 +13,7 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
-  String id = "";
+  String? id;
   ListView? widgetLista = ListView();
 
   void getAutentica() async{
@@ -35,8 +35,8 @@ class _DashboardState extends State<Dashboard> {
 
 
   void _inicio(BuildContext context) async{
-    final prefs = await SharedPreferences.getInstance();
-    if(prefs.containsKey("id")){
+    if(id != null){
+      final prefs = await SharedPreferences.getInstance();
       prefs.remove("id");
       prefs.remove("nome");
 
@@ -118,7 +118,7 @@ class _DashboardState extends State<Dashboard> {
     );
   }
 
-  Widget botaoDeslogar(context){
+  Widget botaoDeslogar(BuildContext context){
     return ElevatedButton(
       onPressed: () =>  _inicio(context),
       style: ElevatedButton.styleFrom(
@@ -133,7 +133,7 @@ class _DashboardState extends State<Dashboard> {
     );
   }
 
-  Widget botaoFiltrar(context){
+  Widget botaoFiltrar(BuildContext context){
     return ElevatedButton(
       onPressed: () =>  _filtrar(context),
       style: ElevatedButton.styleFrom(
@@ -148,7 +148,7 @@ class _DashboardState extends State<Dashboard> {
     );
   }
 
-  Widget botaoRecentes(context){
+  Widget botaoRecentes(BuildContext context){
     return ElevatedButton(
       onPressed: () =>  _recentes(context),
       style: ElevatedButton.styleFrom(
@@ -166,7 +166,7 @@ class _DashboardState extends State<Dashboard> {
   @override
   Widget build(BuildContext context) {
     
-   // widgetLista = getJogos() as ListView;
+   getAutentica();
 
     return Scaffold(
         appBar: AppBar(
@@ -182,10 +182,9 @@ class _DashboardState extends State<Dashboard> {
         children: [
             Column(
               mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Container(
+              children: [SizedBox(child: Container(
                   child: widgetLista,
-                ),
+                ),height: 650,),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [

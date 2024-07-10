@@ -23,7 +23,7 @@ class _RecentesState extends State<Recentes> {
 
   @override
   Widget build(BuildContext context) {
-    widgetLista = getJogos() as ListView;
+    //widgetLista = getJogos() as ListView;
 
     return Scaffold(appBar: AppBar(title: const Text("Recentes"),),
       body: widgetLista

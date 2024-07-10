@@ -15,7 +15,7 @@ class _NovoJogoState extends State<NovoJogo> {
   double estrelas = 0;
 
   void _dashboard(BuildContext context){
-    if(tipo != null && duracaoMinutes.text.isNotEmpty){
+    if(tipo == null || duracaoMinutes.text.isEmpty){
       String title = "Campo(s) vazio(s)";
       String message = "Preencha todos os campos corretamente";
       alerta(context, title, message);
@@ -54,16 +54,15 @@ class _NovoJogoState extends State<NovoJogo> {
       AppBar(title: const Text("Novo Jogo"),),
       body: Column(children: [
         
-        DropdownButton(value: tipo,
-          items: tipos.map<DropdownMenuItem<String>>((tip){
-            return DropdownMenuItem<String>(child: Text(tip));}).toList(),
-          onChanged: (tip) {
+        DropdownButton(items: tipos.map((String valor) => DropdownMenuItem<String>(value: valor, child: Text(valor),)).toList(), 
+          value: tipo,
+          onChanged: (String? tip){
             tipo = tip;
             setState(() {});
           },
           isExpanded: true,
         ),
-
+        
         TextField(controller: duracaoMinutes, keyboardType: TextInputType.text,),
 
         Slider(

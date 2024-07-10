@@ -10,8 +10,8 @@ class Detalhes extends StatefulWidget {
 
 class _DetalhesState extends State<Detalhes> {
   String descricao = "";
-  int? nota = null;
-  String id = "";
+  int? nota;
+  String? id;
   
   void navAvaliacoes(context){
     Navigator.pushNamed(context, "avaliacoes");

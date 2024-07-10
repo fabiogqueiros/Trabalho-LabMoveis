@@ -2,7 +2,7 @@
 import "package:shared_preferences/shared_preferences.dart";
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
-import 'BancoDeDados.dart';
+import 'bancoDeDados.dart';
 
 class Inicio extends StatefulWidget {
   const Inicio({super.key});
@@ -13,7 +13,7 @@ class Inicio extends StatefulWidget {
 
 class _InicioState extends State<Inicio> {
   String nome = "";
-  String id = "";
+  String? id;
 
   late Future<Database> bancoDados;
 
@@ -59,7 +59,7 @@ class _InicioState extends State<Inicio> {
   }
 
   void navEntrar(BuildContext context) {
-    if (id == "") {
+    if (id == null) {
       Navigator.pushNamed(context, "entrar");
     } else {
       Navigator.pushNamed(context, "dashboard");
@@ -67,7 +67,7 @@ class _InicioState extends State<Inicio> {
   }
 
   void navCadastrar(BuildContext context) {
-    if (id == "") {
+    if (id == null) {
       Navigator.pushNamed(context, "cadastrar");
     } else {
       String title = "Usuario ja identificado";
@@ -77,10 +77,12 @@ class _InicioState extends State<Inicio> {
   }
 
   void navPular(BuildContext context) {
-    if (id == "") {
+    if (id == null) {
       Navigator.pushNamed(context, "dashboard");
     } else {
-      Navigator.pushNamed(context, "dashboard");
+      String title = "Usuario ja identificado";
+      String message = "Clique em no botão de Entrar";
+      alerta(context, title, message);
     }
   }
 
@@ -100,7 +102,7 @@ class _InicioState extends State<Inicio> {
         children: [
           const SizedBox(height: 100.0),
           Text(
-            "Seja bem vindo(a), $nome!",
+            "Seja bem vindo(a) $nome!",
             style: const TextStyle(fontSize: 35.0),
           ),
           const SizedBox(height: 90.0),

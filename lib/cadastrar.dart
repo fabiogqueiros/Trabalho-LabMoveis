@@ -15,7 +15,8 @@ class _CadastrarState extends State<Cadastrar> {
   TextEditingController password = TextEditingController();
 
   void _cadastrar(BuildContext context) {
-    if (name.text.isEmpty && mail.text.isEmpty && password.text.isEmpty) {
+    if (name.text.isNotEmpty && mail.text.isNotEmpty && password.text.isNotEmpty) {
+      
       if(checaCadastro(mail.text)){
         String title = "Usuario ja existente";
         String message = "Email invalido";
@@ -60,8 +61,8 @@ class _CadastrarState extends State<Cadastrar> {
     );
   }
 
-  bool checaCadastro(String email) {//Retorna verdadeiro se ja existe usuario
-    bool resp = true;//Fazer a logica do banco de dados
+  bool checaCadastro(String email) {
+    bool resp = true;
     return resp;
   }
 
