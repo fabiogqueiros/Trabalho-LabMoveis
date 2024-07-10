@@ -8,42 +8,23 @@ class Avaliacoes extends StatefulWidget {
 }
 
 class _AvaliacoesState extends State<Avaliacoes> {
+  ListView? widgetLista = ListView();
   
-  Future<Map<String, Map<int, String>>> getAvaliacoes() async{
-    Map<String, Map<int, String>> avaliacoes = await {};
-
-    //Logica do Banco de Dados
-    avaliacoes.forEach((String a, dynamic lista){
-
-    });
-    return avaliacoes;
+  Future<ListView>? getAvaliacoes() async{
+    Map<String, int> avaliacoes = {};
+    //Manipular aqui a lista de jogos, atualizando utilizando o banco com os parametros recebidos
+    if(avaliacoes.isEmpty) const Text("Nenhum jogo disponivel.");
+    
+    ListView temp = await ListView(children: avaliacoes.entries.map((ava) => Row(children: [Text(ava.key), Text(ava.value.toString())],)).toList(),);
+    setState(() {});
+    return temp;
   }
   
   @override
   Widget build(BuildContext context) {
+    widgetLista = getAvaliacoes() as ListView;
     return Scaffold(appBar: AppBar(title: const Text("Avaliações"),),
-      body: Column(children: [
-        FutureBuilder(future: getAvaliacoes(), builder: (context, snapshot){
-            if(snapshot.hasError){
-              return Text("Erro");
-            }
-            else{
-
-              Map<String, Map>? avaliacoes = snapshot.data;
-              
-              return ListView.builder(itemBuilder: (context, index){
-                // Map<String, int> avalia = avaliacoes![index];
-                // return Row(children: [
-                //   Text(index.toString()),
-                //   Text(avalia[index])
-                // ]);
-              });
-
-            }
-          })
-        
-        ,],
-      ),
+      body: widgetLista,
       );
   
   }
