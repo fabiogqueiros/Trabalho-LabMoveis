@@ -19,9 +19,9 @@ class _DashboardState extends State<Dashboard> {
   void getAutentica() async{
     final prefs = await SharedPreferences.getInstance();
     //Testa se tem nome e id salvos
-    bool hasData = prefs.containsKey("id");
+    bool hasData = await prefs.containsKey("id");
     //Se tem dado ele busca
-    if(hasData) id = prefs.getString("id")!;
+    if(hasData) id = await prefs.getString("id")!;
   }
 
   // Future<ListView>? getJogos() async{
@@ -37,8 +37,8 @@ class _DashboardState extends State<Dashboard> {
   void _inicio(BuildContext context) async{
     if(id != null){
       final prefs = await SharedPreferences.getInstance();
-      prefs.remove("id");
-      prefs.remove("nome");
+      await prefs.remove("id");
+      await prefs.remove("nome");
 
       String title = "Usuario Deslogado.";
       String message = "Clique em ok para retornar";
@@ -61,7 +61,7 @@ class _DashboardState extends State<Dashboard> {
   }
 
   void _novoJogo(BuildContext context){
-    // if(id == ""){
+    // if(id == null){
     //   String title = "Usuario nao autenticado.";
     //   String message = "Retorne ao Inicio para se autenticar!";
     //   alerta(context, title, message);
