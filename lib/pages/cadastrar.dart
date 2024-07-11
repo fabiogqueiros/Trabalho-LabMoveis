@@ -1,7 +1,8 @@
 // ignore: depend_on_referenced_packages
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shared_preferences/shared_preferences_add.dart';
 import 'package:flutter/material.dart';
-import 'bancoDeDados.dart';
+import '../services/BancoDeDados.dart';
 
 class Cadastrar extends StatefulWidget {
   const Cadastrar({super.key});
@@ -14,35 +15,89 @@ class _CadastrarState extends State<Cadastrar> {
   TextEditingController name = TextEditingController();
   TextEditingController mail = TextEditingController();
   TextEditingController password = TextEditingController();
-  BancoDados bd = BancoDados.getBanco();
+  BancoDados bd = BancoDados();
+  Map<String, dynamic>? retorno;
 
-  void _cadastrar(BuildContext context) {
-    if (name.text.isNotEmpty && mail.text.isNotEmpty && password.text.isNotEmpty) {
-      
-      if(checaCadastro(mail.text)){
-        String title = "Usuario ja existente";
-        String message = "Email invalido";
-        alerta(context, title, message);
-        return;
+  Future<void> _cadastrar(BuildContext context) async {
+    if (name.text.isNotEmpty &&
+        mail.text.isNotEmpty &&
+        password.text.isNotEmpty) {
+      // print("aff");
+      Map<String, dynamic>? resp =
+          await bd.getUserLogin(name.text, mail.text, password.text);
+      // print("get funciona");
+      if (resp == null) {
+        await bd.insereUser(name.text, mail.text, password.text);
+        String title = 'Atenção!';
+        if (mounted) {
+          String message = 'Usuário cadastrado com sucesso!';
+          // ignore: use_build_context_synchronously
+          sucesso(context, title, message);
+        } else {
+          String message = 'Usuário já possui cadastro!';
+          // ignore: use_build_context_synchronously
+          alerta(context, title, message);
+        }
       }
-      bd.insereUser(name.text, mail.text, password.text);
-      
-      String id = "";//Recuperar do banco de dados o id
+      // if (checaCadastro(mail.text)) {
+      //   String title = "Usuario já existente";
+      //   String message = "Email inválido";
+      //   alerta(context, title, message);
+      //   return;
+      // }
+      // bd.insereUser(name.text, mail.text, password.text);
+      // Map<String, dynamic>? retorno =
+      //     await bd.getUserLogin(name.text, mail.text, password.text);
+      print("$retorno");
+      Text("$retorno");
+
+      Map<String, dynamic>? resp2 =
+          await bd.getUserLogin(name.text, mail.text, password.text);
+      print("$resp2");
+      Text("$resp2");
+
+      String id = ""; //Recuperar do banco de dados o id
       _save(name.text, id);
     } else {
       String title = "Campo(s) vazio(s)";
+
       String message = "Preencha todos os campos do cadastro!";
       alerta(context, title, message);
     }
   }
 
-  void _save(String nome, String id) async{
+  void _save(String nome, String id) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString("nome", nome);
     await prefs.setString("id", id);
   }
 
-  void alerta(BuildContext context, String title, String message){
+  void sucesso(BuildContext context, String title, String message) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text(
+              title,
+              style: TextStyle(backgroundColor: Colors.black),
+            ),
+            content: Text(
+              message,
+              style: TextStyle(backgroundColor: Colors.black),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          );
+        });
+  }
+
+  void alerta(BuildContext context, String title, String message) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -140,13 +195,12 @@ class _CadastrarState extends State<Cadastrar> {
                   controller: password,
                   obscureText: true,
                 )),
-            //TextField(keyboardType:TextInputType.text, controller:name, decoration:const InputDecoration(labelText: "Digite seu nome"),),
-            //TextField(keyboardType: TextInputType.text, controller: mail, decoration:const InputDecoration(labelText: "Digite seu email"),),
-            //TextField(keyboardType: TextInputType.text, controller: password, decoration:const InputDecoration(labelText: "Digite sua senha"),obscureText: true,),
-            // ElevatedButton(onPressed: () => {_save(context)}, child: const Text("Salvar")),
             const SizedBox(height: 55.0),
             TextButton(
-                onPressed: () => {_cadastrar(context)},
+                onPressed: () async {
+                  await _cadastrar(context);
+                  Navigator.pop(context);
+                },
                 style: ElevatedButton.styleFrom(
                     backgroundColor: const Color.fromARGB(255, 61, 2, 71),
                     shape: RoundedRectangleBorder(

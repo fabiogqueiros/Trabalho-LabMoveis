@@ -1,26 +1,19 @@
-import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 class BancoDados {
-  // atributo privado e estático do banco de dados
-  static BancoDados instancia = BancoDados._();
-  static Database? banco; // variavel do banco de dados
+  static final BancoDados _instancia = BancoDados.internal();
+  static Database? _bd;
 
-  // construtor privado
-  BancoDados._();
+  factory BancoDados() => _instancia;
 
-  // construtor que retorna a unica instancia da classe
-  factory BancoDados() {
-    return instancia;
-  }
+  BancoDados.internal();
 
-  // metodo get banco
-  static BancoDados getBanco() {
-    if(banco == null) banco = iniciaBanco() as Database;//Erro aqui!!!!!!!!!
-
-    if (instancia != null) return instancia;
-    instancia = BancoDados();
-    return instancia;
+  Future<Database> get bd async {
+    sqfliteFfiInit();
+    databaseFactory = databaseFactoryFfi; 
+    _bd ??= await iniciaBanco();
+    return _bd!;
   }
 
   // configura a foreign key
@@ -28,9 +21,9 @@ class BancoDados {
     await bd.execute('PRAGMA foreign_keys = ON');
   }
 
-  // metodo que inicia o banco de dados
-  static Future<Database> iniciaBanco() async {
+  Future<Database> iniciaBanco() async {
     String caminho = join(await getDatabasesPath(), 'gamesTracker.db');
+
     const String scriptUser =
         "CREATE TABLE user(id INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR NOT NULL, email VARCHAR NOT NULL, password VARCHAR NOT NULL);";
     const String scriptGenre =
@@ -49,52 +42,54 @@ class BancoDados {
       await bd.execute(scriptGame);
       await bd.execute(scriptGameGenre);
       await bd.execute(scriptReview);
+      // print("criou o banco");
     });
   }
 
   /* funções do crud */
   // insere
   Future<void> insereUser(String nome, String email, String password) async {
-    final bd = banco;
+    final banco = await bd;
     Map<String, dynamic> user = {
       'name': nome,
       'email': email,
       'password': password
     };
-    await bd?.insert('user', user,
+    await banco.insert('user', user,
         conflictAlgorithm: ConflictAlgorithm.replace);
+    // print("inseriu usuario");
   }
 
   Future<void> insereGenre(String nome) async {
-    final bd = banco;
+    final banco = await bd;
     Map<String, dynamic> genre = {'name': nome};
-    await bd?.insert('genre', genre,
+    await banco.insert('genre', genre,
         conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
   Future<void> insereGame(
       int userId, String name, String description, String releaseDate) async {
-    final bd = banco;
+    final banco = await bd;
     Map<String, dynamic> game = {
       'user_id': userId,
       'name': name,
       'description': description,
       'release_date': releaseDate
     };
-    await bd?.insert('game', game,
+    await banco.insert('game', game,
         conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
   Future<void> insereGameGenre(int gameId, int genreId) async {
-    final bd = banco;
+    final banco = await bd;
     Map<String, dynamic> gameGenre = {'game_id': gameId, 'genre_id': genreId};
-    await bd?.insert('game_genre', gameGenre,
+    await banco.insert('game_genre', gameGenre,
         conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
   Future<void> insereReview(int userId, int gameId, double score,
       String description, String date) async {
-    final bd = banco;
+    final banco = await bd;
     Map<String, dynamic> review = {
       'user_id': userId,
       'game_id': gameId,
@@ -102,7 +97,7 @@ class BancoDados {
       'description': description,
       'date': date
     };
-    await bd?.insert('review', review,
+    await banco.insert('review', review,
         conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
@@ -110,9 +105,9 @@ class BancoDados {
   // retorna senha e usuário - login
   Future<Map<String, dynamic>?> getUserLogin(
       String name, String email, String password) async {
-    final bd = banco;
+    final banco = await bd;
     String script = 'name = ? AND email = ? AND password = ?';
-    List<Map<String, dynamic>> user = await bd!
+    List<Map<String, dynamic>> user = await banco
         .query('user', where: script, whereArgs: [name, email, password]);
 
     if (user.isNotEmpty) {
@@ -124,8 +119,8 @@ class BancoDados {
 
   // retorna id do usuário
   Future<List<int>?> getUserId() async {
-    final bd = banco;
-    final results = await bd!.query('user', columns: ['id']);
+    final banco = await bd;
+    final results = await banco.query('user', columns: ['id']);
     final ids = results.map((row) => row['id'] as int).toList();
 
     if (ids.isNotEmpty) {
@@ -137,9 +132,9 @@ class BancoDados {
 
   // retorna descrição do jogo
   Future<Map<String, dynamic>> getDescriptionGame(int id, String name) async {
-    final bd = banco;
+    final banco = await bd;
     String script = 'id = ? AND name = ?';
-    List<Map<String, dynamic>> description = await bd!.query('game',
+    List<Map<String, dynamic>> description = await banco.query('game',
         columns: ['description'], where: script, whereArgs: [id, name]);
 
     return description.first;
@@ -148,9 +143,9 @@ class BancoDados {
   // retorna os comentários sobre o jogo
   Future<List<Map<String, dynamic>>?> getDescriptionReview(
       int id, String name) async {
-    final bd = banco;
+    final banco = await bd;
     String script = 'id = ? AND name = ?';
-    List<Map<String, dynamic>> description = await bd!.query('review',
+    List<Map<String, dynamic>> description = await banco.query('review',
         columns: ['description', 'score'],
         where: script,
         whereArgs: [id, name]);
@@ -161,4 +156,14 @@ class BancoDados {
       return null;
     }
   }
+
+  Future<void> deleteAllData() async {
+    final db = await bd;
+    await db.delete('user');
+    await db.delete('genre');
+    await db.delete('game');
+    await db.delete('game_genre');
+    await db.delete('review');
+    // print('Todos os dados foram excluídos de todas as tabelas.');
+}
 }

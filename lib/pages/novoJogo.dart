@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 
-class Filtrar extends StatefulWidget {
-  const Filtrar({super.key});
+class NovoJogo extends StatefulWidget {
+  const NovoJogo({super.key});
 
   @override
-  State<Filtrar> createState() => _FiltrarState();
+  State<NovoJogo> createState() => _NovoJogoState();
 }
 
-class _FiltrarState extends State<Filtrar> {
+class _NovoJogoState extends State<NovoJogo> {
   TextEditingController duracaoMinutes = TextEditingController();
-  List<String> tipos = ["Acao", "Suspense", "Corrida", "Estrategia", "Esportes", "Plataforma"];
-  Arguments argument = Arguments();
+  List<String> tipos = ["Ação", "Suspense", "Corrida", "Estratégia", "Esportes", "Plataforma"];
   
   String? tipo;
   double estrelas = 0;
@@ -22,10 +21,10 @@ class _FiltrarState extends State<Filtrar> {
       alerta(context, title, message);
       return;
     }
-    /*argument.duracao = int.parse(duracaoMinutes.text);
-    argument.estrelas = estrelas;
-    argument.tipo = tipo!;*/
-    Navigator.pop(context, argument);
+    String title = "Jogo salvo com sucesso";
+    String message = "Retornando ao Dashboard";
+    alerta(context, title, message);
+    Navigator.pop(context);
   }
 
   void alerta(BuildContext context, String title, String message){
@@ -51,10 +50,14 @@ class _FiltrarState extends State<Filtrar> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(appBar: 
-      AppBar(title: const Text("Filtrar"),),
+    return Scaffold(appBar: AppBar(title: const Text("Novo Jogo",
+        style: TextStyle(
+          color: Colors.white
+        ),),
+      iconTheme: const IconThemeData(
+        color: Colors.white),
+      backgroundColor: const Color.fromARGB(255, 61, 2, 71),),
       body: Column(children: [
-        
         DropdownButton(items: tipos.map((String valor) => DropdownMenuItem<String>(value: valor, child: Text(valor),)).toList(), 
           value: tipo,
           onChanged: (String? tip){
@@ -63,7 +66,7 @@ class _FiltrarState extends State<Filtrar> {
           },
           isExpanded: true,
         ),
-
+        
         TextField(controller: duracaoMinutes, keyboardType: TextInputType.text,),
 
         Slider(
@@ -73,35 +76,27 @@ class _FiltrarState extends State<Filtrar> {
           activeColor: Colors.white,
           inactiveColor: Colors.blue,
           onChanged: (double value){
-            estrelas = value;
-            setState(() {});
+            setState(() {
+              estrelas = value;
+            });
           },
         ),
-
-
-        ElevatedButton(onPressed: () => _dashboard(context), child: const Text("Filtrar"))
+        TextButton(
+          onPressed: () => {
+            _dashboard(context),
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color.fromARGB(255, 61, 2, 71),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+            padding: const EdgeInsets.symmetric(
+                horizontal: 28.0, vertical: 12.0),
+            textStyle: const TextStyle(fontSize: 20.0)),
+          child: const Text("Salvar",
+            style: TextStyle(color: Colors.white)))
       ],)
     
     );
   }
 }
-
-class Arguments{
-  String tipo = "";
-  int duracao = 0;
-  double estrelas = 0;
-}
-
-
-/*
-DropdownButton(
-  value: arg.municipio,
-  items: cidades.map<DropdownMenuItem<String>>((cidade) {
-    return DropdownMenuItem<String>(value: cidade['nome'],child: Text(cidade['nome'], style: const TextStyle(fontSize: 22),),);}).toList(),
-  onChanged: (municipio){
-    arg.municipio = municipio;
-    setState(() {});
-  },
-  isExpanded: true,
-  ),
- */

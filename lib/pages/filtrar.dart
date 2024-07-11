@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 
-class NovoJogo extends StatefulWidget {
-  const NovoJogo({super.key});
+class Filtrar extends StatefulWidget {
+  const Filtrar({super.key});
 
   @override
-  State<NovoJogo> createState() => _NovoJogoState();
+  State<Filtrar> createState() => _FiltrarState();
 }
 
-class _NovoJogoState extends State<NovoJogo> {
+class _FiltrarState extends State<Filtrar> {
   TextEditingController duracaoMinutes = TextEditingController();
   List<String> tipos = ["Acao", "Suspense", "Corrida", "Estrategia", "Esportes", "Plataforma"];
+  Arguments argument = Arguments();
   
   String? tipo;
   double estrelas = 0;
@@ -21,10 +22,10 @@ class _NovoJogoState extends State<NovoJogo> {
       alerta(context, title, message);
       return;
     }
-    String title = "Jogo salvo com sucesso";
-    String message = "Retornando ao Dashboard";
-    alerta(context, title, message);
-    Navigator.pop(context);
+    /*argument.duracao = int.parse(duracaoMinutes.text);
+    argument.estrelas = estrelas;
+    argument.tipo = tipo!;*/
+    Navigator.pop(context, argument);
   }
 
   void alerta(BuildContext context, String title, String message){
@@ -50,8 +51,13 @@ class _NovoJogoState extends State<NovoJogo> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(appBar: 
-      AppBar(title: const Text("Novo Jogo"),),
+    return Scaffold(appBar: AppBar(title: const Text("Filtrar",
+        style: TextStyle(
+          color: Colors.white
+        ),),
+      iconTheme: const IconThemeData(
+        color: Colors.white),
+      backgroundColor: const Color.fromARGB(255, 61, 2, 71),),
       body: Column(children: [
         
         DropdownButton(items: tipos.map((String valor) => DropdownMenuItem<String>(value: valor, child: Text(valor),)).toList(), 
@@ -62,7 +68,7 @@ class _NovoJogoState extends State<NovoJogo> {
           },
           isExpanded: true,
         ),
-        
+
         TextField(controller: duracaoMinutes, keyboardType: TextInputType.text,),
 
         Slider(
@@ -78,12 +84,29 @@ class _NovoJogoState extends State<NovoJogo> {
         ),
 
 
-        ElevatedButton(onPressed: (){
-          _dashboard(context);
-        },
-         child: const Text("Salvar"))
+        ElevatedButton(onPressed: () => _dashboard(context), child: const Text("Filtrar"))
       ],)
     
     );
   }
 }
+
+class Arguments{
+  String tipo = "";
+  int duracao = 0;
+  double estrelas = 0;
+}
+
+
+/*
+DropdownButton(
+  value: arg.municipio,
+  items: cidades.map<DropdownMenuItem<String>>((cidade) {
+    return DropdownMenuItem<String>(value: cidade['nome'],child: Text(cidade['nome'], style: const TextStyle(fontSize: 22),),);}).toList(),
+  onChanged: (municipio){
+    arg.municipio = municipio;
+    setState(() {});
+  },
+  isExpanded: true,
+  ),
+ */

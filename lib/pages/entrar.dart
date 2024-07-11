@@ -1,5 +1,5 @@
 // ignore: depend_on_referenced_packages
-import 'package:af_trabalhofinal/bancoDeDados.dart';
+import 'package:af_trabalhofinal/services/BancoDeDados.dart';
 import "package:shared_preferences/shared_preferences.dart";
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
@@ -14,11 +14,11 @@ class Entrar extends StatefulWidget {
 class _EntrarState extends State<Entrar> {
   TextEditingController mail = TextEditingController();
   TextEditingController password = TextEditingController();
-  BancoDados bd = BancoDados.getBanco() as BancoDados;
-
+  BancoDados bd = BancoDados();
 
   void navDashboard(BuildContext context) async {
     if(mail.text.isNotEmpty && password.text.isNotEmpty){
+      
       String mailConsulta = "";//consultar no Banco aqui
       String passwordConsulta = "";//consultar no Banco aqui
       String nome = "";//consultar no Banco aqui
@@ -39,8 +39,8 @@ class _EntrarState extends State<Entrar> {
     else{
       String title = "Campo Vazio";
       String message = "Preencha todos os campos";
-      //alerta(context, title, message);
-      Navigator.pushNamed(context, "detalhes");
+      alerta(context, title, message);
+      //Navigator.pushNamed(context, "detalhes");
     }
   }
 
@@ -63,14 +63,12 @@ class _EntrarState extends State<Entrar> {
       },
     );
   }
-
   
   void _save(String nome, String id) async{
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString("nome", nome);
     await prefs.setString("id", id);
   }
-
 
   @override
   Widget build(BuildContext context) {

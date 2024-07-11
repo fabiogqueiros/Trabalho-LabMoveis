@@ -2,7 +2,7 @@
 import "package:shared_preferences/shared_preferences.dart";
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
-import 'bancoDeDados.dart';
+import '../services/BancoDeDados.dart';
 
 class Inicio extends StatefulWidget {
   const Inicio({super.key});
@@ -14,14 +14,7 @@ class Inicio extends StatefulWidget {
 class _InicioState extends State<Inicio> {
   String nome = "";
   String? id;
-
-  // late Future<Database> bancoDados;
-  final bd = BancoDados.getBanco();
-
-  // essa função é responsável por criar o banco de dados
-  // void banco(){
-  //   bancoDados = iniciaBanco();
-  // }
+  BancoDados bd = BancoDados();
 
   void _init() async {
     final prefs = await SharedPreferences.getInstance();
@@ -108,7 +101,10 @@ class _InicioState extends State<Inicio> {
           ),
           const SizedBox(height: 90.0),
           TextButton(
-              onPressed: () => navEntrar(context),
+              onPressed: () {
+                bd.deleteAllData();
+                navEntrar(context);
+              },
               style: ElevatedButton.styleFrom(
                   backgroundColor: const Color.fromARGB(255, 61, 2, 71),
                   shape: RoundedRectangleBorder(
@@ -121,7 +117,10 @@ class _InicioState extends State<Inicio> {
                   const Text("Entrar", style: TextStyle(color: Colors.white))),
           const SizedBox(height: 40.0),
           TextButton(
-              onPressed: () => navCadastrar(context),
+              onPressed: () {
+                bd.deleteAllData();
+                navCadastrar(context);
+              },
               style: ElevatedButton.styleFrom(
                   backgroundColor: const Color.fromARGB(255, 61, 2, 71),
                   shape: RoundedRectangleBorder(

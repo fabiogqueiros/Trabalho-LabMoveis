@@ -33,7 +33,14 @@ class _RecentesState extends State<Recentes> {
   Widget build(BuildContext context) {
     getJogos();
 
-    return Scaffold(appBar: AppBar(title: const Text("Recentes"),),
+    return Scaffold(
+      appBar: AppBar(title: const Text("Recentes",
+        style: TextStyle(
+          color: Colors.white
+        ),),
+      iconTheme: const IconThemeData(
+        color: Colors.white),
+      backgroundColor: const Color.fromARGB(255, 61, 2, 71),),
       body: widgetLista
     );
   }

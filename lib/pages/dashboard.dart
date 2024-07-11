@@ -98,9 +98,6 @@ class _DashboardState extends State<Dashboard> {
     );
   }
 
-
-
-
   //Alterei o escopo dos botoes aqui!
 
   Widget botaoAdicionar(context) {
