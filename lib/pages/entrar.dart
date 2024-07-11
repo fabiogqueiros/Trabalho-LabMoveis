@@ -51,7 +51,7 @@ class _EntrarState extends State<Entrar> {
       }
 
       //Email e senha estao corretos
-      _save(nome, id);
+      await _save(nome, id);
       Navigator.pushNamed(context, "dashboard");
     } else {
       String title = "Campo Vazio";
