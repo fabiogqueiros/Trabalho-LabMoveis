@@ -117,6 +117,19 @@ class BancoDados {
     }
   }
 
+  Future<Map<String, dynamic>?> getUserNavLogin(String email, String password) async {
+    final banco = await bd;
+    String script = 'id = ? AND name = ? AND email = ? AND password = ?';
+    List<Map<String, dynamic>> user = await banco
+        .query('user', where: script, whereArgs: [email, password]);
+
+    if (user.isNotEmpty) {
+      return user.first;
+    } else {
+      return null;
+    }
+  }
+
   // retorna id do usuário
   Future<List<int>?> getUserId() async {
     final banco = await bd;

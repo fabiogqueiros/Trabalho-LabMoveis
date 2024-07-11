@@ -1,6 +1,6 @@
 // ignore: depend_on_referenced_packages
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:shared_preferences/shared_preferences_add.dart';
+// import 'package:shared_preferences/shared_preferences_add.dart';
 import 'package:flutter/material.dart';
 import '../services/BancoDeDados.dart';
 
@@ -16,7 +16,6 @@ class _CadastrarState extends State<Cadastrar> {
   TextEditingController mail = TextEditingController();
   TextEditingController password = TextEditingController();
   BancoDados bd = BancoDados();
-  Map<String, dynamic>? retorno;
 
   Future<void> _cadastrar(BuildContext context) async {
     if (name.text.isNotEmpty &&
@@ -48,8 +47,8 @@ class _CadastrarState extends State<Cadastrar> {
       // bd.insereUser(name.text, mail.text, password.text);
       // Map<String, dynamic>? retorno =
       //     await bd.getUserLogin(name.text, mail.text, password.text);
-      print("$retorno");
-      Text("$retorno");
+      // print("$retorno");
+      // Text("$retorno");
 
       Map<String, dynamic>? resp2 =
           await bd.getUserLogin(name.text, mail.text, password.text);
