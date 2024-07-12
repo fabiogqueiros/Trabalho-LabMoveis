@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' show AlertDialog, AppBar, BuildContext, Column, Navigator, Scaffold, State, StatefulWidget, Text, TextButton, Widget, showDialog;
+// ignore: depend_on_referenced_packages
 import "package:shared_preferences/shared_preferences.dart";
 
 class Detalhes extends StatefulWidget {

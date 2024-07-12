@@ -19,7 +19,6 @@ class _EntrarState extends State<Entrar> {
   void navDashboard(BuildContext context) async {
     if (mail.text.isNotEmpty && password.text.isNotEmpty) {
       retorno = await bd.getUserNavLogin(mail.text, password.text);
-      // print("$retorno");
       if (retorno == null) {
         String title = "Usuário não cadastrado";
         String message = "Cadastre-se para acessar as opções do Dashboard.";

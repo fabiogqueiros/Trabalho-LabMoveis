@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:af_trabalhofinal/services/BancoDeDados.dart';
 
 class Filtrar extends StatefulWidget {
   const Filtrar({super.key});
@@ -8,27 +9,43 @@ class Filtrar extends StatefulWidget {
 }
 
 class _FiltrarState extends State<Filtrar> {
-  TextEditingController duracaoMinutes = TextEditingController();
-  List<String> tipos = ["Acao", "Suspense", "Corrida", "Estrategia", "Esportes", "Plataforma"];
-  Arguments argument = Arguments();
-  
+  List<String> tipos = [
+    "Ação",
+    "Suspense",
+    "Corrida",
+    "Estratégia",
+    "Esportes",
+    "Plataforma"
+  ];
   String? tipo;
-  double estrelas = 0;
+  List<Map<String, dynamic>> jogosFiltrados = [];
 
-  void _dashboard(BuildContext context){
-    if(tipo == null || duracaoMinutes.text.isEmpty){
-      String title = "Campo(s) vazio(s)";
-      String message = "Preencha todos os campos corretamente";
+  BancoDados bd = BancoDados();
+
+  void _filtrarJogos() async {
+    if (tipo == null) {
+      String title = "Campo vazio";
+      String message = "Selecione um tipo de jogo";
       alerta(context, title, message);
       return;
     }
-    /*argument.duracao = int.parse(duracaoMinutes.text);
-    argument.estrelas = estrelas;
-    argument.tipo = tipo!;*/
-    Navigator.pop(context, argument);
+
+    final banco = await bd.bd;
+    String query = '''
+      SELECT game.*
+      FROM game 
+      JOIN game_genre ON game.id = game_genre.game_id 
+      JOIN genre ON game_genre.genre_id = genre.id 
+      WHERE genre.name = ?
+    ''';
+    List<Map<String, dynamic>> result = await banco.rawQuery(query, [tipo]);
+
+    setState(() {
+      jogosFiltrados = result;
+    });
   }
 
-  void alerta(BuildContext context, String title, String message){
+  void alerta(BuildContext context, String title, String message) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -48,65 +65,70 @@ class _FiltrarState extends State<Filtrar> {
     );
   }
 
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(appBar: AppBar(title: const Text("Filtrar",
-        style: TextStyle(
-          color: Colors.white
-        ),),
-      iconTheme: const IconThemeData(
-        color: Colors.white),
-      backgroundColor: const Color.fromARGB(255, 61, 2, 71),),
-      body: Column(children: [
-        
-        DropdownButton(items: tipos.map((String valor) => DropdownMenuItem<String>(value: valor, child: Text(valor),)).toList(), 
-          value: tipo,
-          onChanged: (String? tip){
-            tipo = tip;
-            setState(() {});
-          },
-          isExpanded: true,
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Filtrar", style: TextStyle(color: Colors.white)),
+        iconTheme: const IconThemeData(color: Colors.white),
+        backgroundColor: const Color.fromARGB(255, 61, 2, 71),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            DropdownButton<String>(
+              items: tipos.map((String valor) {
+                return DropdownMenuItem<String>(
+                  value: valor,
+                  child: Text(valor),
+                );
+              }).toList(),
+              value: tipo,
+              onChanged: (String? novoValor) {
+                setState(() {
+                  tipo = novoValor;
+                });
+              },
+              isExpanded: true,
+              hint: const Text("Selecione um tipo"),
+            ),
+            ElevatedButton(
+              onPressed: _filtrarJogos,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color.fromARGB(255, 61, 2, 71),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 28.0, vertical: 12.0),
+                textStyle: const TextStyle(fontSize: 20.0),
+              ),
+              child: const Text("Filtrar", style: TextStyle(color: Colors.white)),
+            ),
+            Expanded(
+              child: jogosFiltrados.isEmpty
+                  ? const Center(child: Text("Nenhum jogo encontrado"))
+                  : ListView.builder(
+                      itemCount: jogosFiltrados.length,
+                      itemBuilder: (context, index) {
+                        return ListTile(
+                          title: Text(jogosFiltrados[index]['name']),
+                          subtitle: Text(
+                              "Descrição: ${jogosFiltrados[index]['description']}"),
+                        );
+                      },
+                    ),
+            ),
+          ],
         ),
-
-        TextField(controller: duracaoMinutes, keyboardType: TextInputType.text,),
-
-        Slider(
-          divisions: 10, min: 0, max: 10,
-          label: estrelas.toString(),
-          value: estrelas,
-          activeColor: Colors.white,
-          inactiveColor: Colors.blue,
-          onChanged: (double value){
-            estrelas = value;
-            setState(() {});
-          },
-        ),
-
-
-        ElevatedButton(onPressed: () => _dashboard(context), child: const Text("Filtrar"))
-      ],)
-    
+      ),
     );
   }
 }
 
-class Arguments{
-  String tipo = "";
-  int duracao = 0;
-  double estrelas = 0;
+class Arguments {
+  final String tipo;
+
+  Arguments({required this.tipo});
 }
-
-
-/*
-DropdownButton(
-  value: arg.municipio,
-  items: cidades.map<DropdownMenuItem<String>>((cidade) {
-    return DropdownMenuItem<String>(value: cidade['nome'],child: Text(cidade['nome'], style: const TextStyle(fontSize: 22),),);}).toList(),
-  onChanged: (municipio){
-    arg.municipio = municipio;
-    setState(() {});
-  },
-  isExpanded: true,
-  ),
- */

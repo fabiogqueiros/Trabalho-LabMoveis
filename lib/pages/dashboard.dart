@@ -1,9 +1,8 @@
-// ignore_for_file: use_build_context_synchronously, depend_on_referenced_packages
+// ignore_for_file: use_build_context_synchronously
 
 import 'dart:async';
-
 import 'package:af_trabalhofinal/services/BancoDeDados.dart';
-import "package:shared_preferences/shared_preferences.dart";
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
 
 class Dashboard extends StatefulWidget {
@@ -15,57 +14,53 @@ class Dashboard extends StatefulWidget {
 
 class _DashboardState extends State<Dashboard> {
   String? id;
-  ListView? widgetLista = ListView();
+  List<Map<String, dynamic>> jogos = [];
   BancoDados bd = BancoDados();
+
+  @override
+  void initState() {
+    super.initState();
+    getAutentica();
+    getJogos();
+  }
 
   void getAutentica() async {
     final prefs = await SharedPreferences.getInstance();
-    //Testa se tem nome e id salvos
-    // ignore: await_only_futures
-    bool hasData = await prefs.containsKey("id");
-    //Se tem dado ele busca
-    // ignore: await_only_futures
-    if (hasData) id = await prefs.getString("id")!;
+    bool hasData = prefs.containsKey("id");
+    if (hasData) {
+      setState(() {
+        id = prefs.getString("id");
+      });
+    }
   }
 
-  Future<ListView>? getJogos() async {
-    Map<String, int> jogos = {};
-    //Manipular aqui a lista de jogos, atualizando utilizando o banco com os parametros recebidos
-    if (jogos.isEmpty) const Text("Nenhum jogo disponivel.");
+  Future<void> getJogos() async {
+    final banco = await bd.bd;
+    List<Map<String, dynamic>> result = await banco.query('game');
+    setState(() {
+      jogos = result;
+    });
+  }
 
-    // ignore: await_only_futures
-    return await ListView(
-      children: jogos.entries
-          .map((jog) => Row(
-                children: [Text(jog.key), Text(jog.value.toString())],
-              ))
-          .toList(),
-    );
+  Future<void> deleteJogo(String name) async {
+    await bd.deleteGameByName(name);
+    await getJogos();
   }
 
   void _inicio(BuildContext context) async {
-    if (id != null) {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.remove("id");
-      await prefs.remove("nome");
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove("id");
+    await prefs.remove("nome");
 
-      String title = "Usuário Deslogado.";
-      String message = "Clique em ok para retornar";
-      await alerta(context, title, message);
-    } else {
-      String title = "Voce não entrou.";
-      String message = "Retornando ao inicio";
-      await alerta(context, title, message);
-    }
+    String title = "Usuário Deslogado.";
+    String message = "Clique em ok para retornar";
+    await alerta(context, title, message);
     Navigator.pushNamedAndRemoveUntil(context, "/", (route) => false);
   }
 
   void _filtrar(BuildContext context) {
     Navigator.pushNamed(context, "filtrar").then((value) {
-      //Ele retorna aqui o argumento
-      //Manipular aqui a lista de jogos, atualizar utilizando o banco com os parametros recebidos
-      // widgetLista = bd.G as ListView;
-      setState(() {});
+      getJogos(); // Recarrega a lista de jogos após o filtro
     });
   }
 
@@ -76,29 +71,16 @@ class _DashboardState extends State<Dashboard> {
       alerta(context, title, message);
       return;
     }
-    Navigator.pushNamed(context, "novoJogo");
+    Navigator.pushNamed(context, "novoJogo").then((value) {
+      getJogos(); // Recarrega a lista de jogos após adicionar um novo jogo
+    });
   }
 
-  void _recentes(BuildContext context) async {
-    if (id != null) {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.remove("id");
-      await prefs.remove("nome");
-
-      String title = "Usuário Deslogado.";
-      String message = "Clique em ok para retornar";
-      alerta(context, title, message);
-    } else {
-      String title = "Voce nao entrou.";
-      String message = "Retornando ao inicio";
-      alerta(context, title, message);
-    }
-    Navigator.pop(context, "inicio");
-    // Navigator.pushNamed(context, "recentes");
+  void _recentes(BuildContext context) {
+    Navigator.pushNamed(context, "recentes");
   }
 
-  Future<void> alerta(
-      BuildContext context, String title, String message) async {
+  Future<void> alerta(BuildContext context, String title, String message) async {
     return showDialog<void>(
       context: context,
       builder: (BuildContext context) {
@@ -131,8 +113,6 @@ class _DashboardState extends State<Dashboard> {
       },
     );
   }
-
-  //Alterei o escopo dos botoes aqui!
 
   Widget botaoAdicionar(context) {
     return ElevatedButton(
@@ -196,8 +176,6 @@ class _DashboardState extends State<Dashboard> {
 
   @override
   Widget build(BuildContext context) {
-    getAutentica();
-
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -208,30 +186,40 @@ class _DashboardState extends State<Dashboard> {
         backgroundColor: const Color.fromARGB(255, 61, 2, 71),
       ),
       body: Center(
-          child: Column(
-        children: [
-          Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              SizedBox(
-                height: 650,
-                child: Container(
-                  child: widgetLista,
-                ),
-              ),
-              Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+        child: Column(
+          children: [
+            Expanded(
+              child: jogos.isEmpty
+                  ? const Center(child: Text("Nenhum jogo disponível"))
+                  : ListView.builder(
+                      itemCount: jogos.length,
+                      itemBuilder: (context, index) {
+                        return ListTile(
+                          title: Text(jogos[index]['name']),
+                          subtitle: Text(jogos[index]['description']),
+                          trailing: IconButton(
+                            icon: Icon(Icons.delete),
+                            onPressed: () => deleteJogo(jogos[index]['name']),
+                          ),
+                        );
+                      },
+                    ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
                 botaoAdicionar(context),
                 const SizedBox(width: 20),
                 botaoDeslogar(context),
                 const SizedBox(width: 20),
                 botaoFiltrar(context),
                 const SizedBox(width: 15),
-                botaoRecentes(context)
-              ])
-            ],
-          ),
-        ],
-      )),
+                botaoRecentes(context),
+              ],
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

@@ -1,6 +1,5 @@
 // ignore: depend_on_referenced_packages
 import 'package:shared_preferences/shared_preferences.dart';
-// import 'package:shared_preferences/shared_preferences_add.dart';
 import 'package:flutter/material.dart';
 import '../services/BancoDeDados.dart';
 

@@ -9,8 +9,12 @@ import 'pages/entrar.dart';
 import 'pages/novoJogo.dart';
 import 'pages/recentes.dart';
 import 'package:flutter/material.dart';
+import 'services/BancoDeDados.dart';
 
-void main(List<String> args) {
+Future<void> main(List<String> args) async {
+  WidgetsFlutterBinding.ensureInitialized();
+  BancoDados bd = BancoDados();
+  await bd.insereGenresIniciais();
   runApp(MaterialApp(
       title: "Game Tracker",
       debugShowCheckedModeBanner: false,

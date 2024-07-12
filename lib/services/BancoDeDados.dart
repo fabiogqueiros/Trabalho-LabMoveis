@@ -31,7 +31,7 @@ class BancoDados {
       sqfliteFfiInit();
       databaseFactory = databaseFactoryFfi;
     }
-    
+
     String caminho = join(await getDatabasesPath(), 'gamesTracker.db');
 
     const String scriptUser =
@@ -67,7 +67,6 @@ class BancoDados {
     };
     await banco.insert('user', user,
         conflictAlgorithm: ConflictAlgorithm.abort);
-    print("inseriu usuario");
   }
 
   Future<void> insereGenre(String nome) async {
@@ -77,7 +76,7 @@ class BancoDados {
         conflictAlgorithm: ConflictAlgorithm.abort);
   }
 
-  Future<void> insereGame(
+  Future<int> insereGame(
       int userId, String name, String description, String releaseDate) async {
     final banco = await bd;
     Map<String, dynamic> game = {
@@ -86,10 +85,9 @@ class BancoDados {
       'description': description,
       'release_date': releaseDate
     };
-    await banco.insert('game', game,
-        conflictAlgorithm: ConflictAlgorithm.abort);
-
-    print('insere ok');
+    int gameId = await banco.insert('game', game,
+        conflictAlgorithm: ConflictAlgorithm.replace);
+    return gameId;
   }
 
   Future<void> insereGameGenre(int gameId, int genreId) async {
@@ -156,7 +154,6 @@ class BancoDados {
     }
   }
 
-  // retorna descrição do jogo
   Future<Map<String, dynamic>> getDescriptionGame(int id, String name) async {
     final banco = await bd;
     String script = 'id = ? AND name = ?';
@@ -166,7 +163,6 @@ class BancoDados {
     return description.first;
   }
 
-  // retorna os comentários sobre o jogo
   Future<List<Map<String, dynamic>>?> getDescriptionReview(
       int id, String name) async {
     final banco = await bd;
@@ -183,10 +179,21 @@ class BancoDados {
     }
   }
 
-  // Future<List<Map<Object, dynamic>>?> getGames(String name) async {
-  //   final banco = await bd;
-  //   String script
-  // }
+  Future<List<Map<String, dynamic>>?> getJogos() async {
+    final banco = await bd;
+    return await banco.query('game', columns: ['name', '']);
+  }
+
+  Future<void> deleteGameByName(String name) async {
+    final banco = await bd;
+    await banco.transaction((txn) async {
+      // Primeiro, exclua os registros relacionados de game_genre e review
+      await txn.delete('game_genre', where: 'game_id IN (SELECT id FROM game WHERE name = ?)', whereArgs: [name]);
+      await txn.delete('review', where: 'game_id IN (SELECT id FROM game WHERE name = ?)', whereArgs: [name]);
+      // Em seguida, exclua o jogo
+      await txn.delete('game', where: 'name = ?', whereArgs: [name]);
+    });
+  }
 
   Future<void> deleteAllData() async {
     final db = await bd;
@@ -195,6 +202,19 @@ class BancoDados {
     await db.delete('game');
     await db.delete('game_genre');
     await db.delete('review');
-    // print('Todos os dados foram excluídos de todas as tabelas.');
+  }
+
+  Future<void> insereGenresIniciais() async {
+    List<String> generos = [
+      "Ação",
+      "Suspense",
+      "Corrida",
+      "Estratégia",
+      "Esportes",
+      "Plataforma"
+    ];
+    for (String genero in generos) {
+      await insereGenre(genero);
+    }
   }
 }
