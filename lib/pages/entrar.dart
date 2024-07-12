@@ -1,8 +1,7 @@
-// ignore: depend_on_referenced_packages
+// ignore_for_file: depend_on_referenced_packages
 import 'package:af_trabalhofinal/services/BancoDeDados.dart';
 import "package:shared_preferences/shared_preferences.dart";
 import 'package:flutter/material.dart';
-import 'package:sqflite/sqflite.dart';
 
 class Entrar extends StatefulWidget {
   const Entrar({super.key});
@@ -20,85 +19,54 @@ class _EntrarState extends State<Entrar> {
   void navDashboard(BuildContext context) async {
     if (mail.text.isNotEmpty && password.text.isNotEmpty) {
       retorno = await bd.getUserNavLogin(mail.text, password.text);
-
+      // print("$retorno");
       if (retorno == null) {
         String title = "Usuário não cadastrado";
         String message = "Cadastre-se para acessar as opções do Dashboard.";
-        alertaNaoCadastrado(context, title, message);
+        // ignore: use_build_context_synchronously
+        alerta(context, title, message);
+        return;
       }
-
-      if ((retorno?['mail'] != mail.text) ||
+      if ((retorno?['email'] != mail.text) ||
           (retorno?['password'] != password.text)) {
         String title = "E-mail e/ou senha errados";
         String message = "Preencha os dados corretamente!";
+        // ignore: use_build_context_synchronously
         alerta(context, title, message);
         return;
       } else {
-        _save(retorno?['name'], retorno?['id']);
+        _save(retorno?['name'], retorno!['id'].toString());
+        // ignore: use_build_context_synchronously
+        Navigator.pushNamed(context, "dashboard");
       }
-
-      String mailConsulta = ""; //consultar no Banco aqui
-      String passwordConsulta = ""; //consultar no Banco aqui
-      String nome = ""; //consultar no Banco aqui
-      String id = ""; //consultar no Banco aqui
-
-      // ignore: unrelated_type_equality_checks
-      if (mailConsulta != mail || passwordConsulta != password) {
-        String title = "Email ou senha errado";
-        String message = "Preencha corretamente o email ou senha";
-        alerta(context, title, message);
-        return;
-      }
-
-      //Email e senha estao corretos
-      await _save(nome, id);
-      Navigator.pushNamed(context, "dashboard");
-    } else {
-      String title = "Campo Vazio";
-      String message = "Preencha todos os campos";
-      alerta(context, title, message);
-      //Navigator.pushNamed(context, "detalhes");
     }
   }
 
   void alerta(BuildContext context, String title, String message) {
     showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(title),
-          content: Text(message),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('OK'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  void alertaNaoCadastrado(BuildContext context, String title, String message) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(title),
-          content: Text(message),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('OK'),
-            ),
-          ],
-        );
-      },
-    );
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text(title),
+            content: Text(message),
+            actions: [
+              TextButton(
+                  onPressed: () {
+                    Navigator.pop(context, "entrar");
+                  },
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color.fromARGB(255, 61, 2, 71),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 28.0, vertical: 12.0),
+                      textStyle: const TextStyle(fontSize: 20.0)),
+                  child:
+                      const Text("OK", style: TextStyle(color: Colors.white)))
+            ],
+          );
+        });
   }
 
   void _save(String nome, String id) async {
@@ -106,6 +74,7 @@ class _EntrarState extends State<Entrar> {
     await prefs.setString("nome", nome);
     await prefs.setString("id", id);
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -163,7 +132,10 @@ class _EntrarState extends State<Entrar> {
                 )),
             const SizedBox(height: 100.0),
             TextButton(
-                onPressed: () => navDashboard(context),
+                onPressed: () {
+                  // _clearAll();
+                  navDashboard(context);
+                },
                 style: ElevatedButton.styleFrom(
                     backgroundColor: const Color.fromARGB(255, 61, 2, 71),
                     shape: RoundedRectangleBorder(

@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:path/path.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
@@ -10,9 +11,13 @@ class BancoDados {
   BancoDados.internal();
 
   Future<Database> get bd async {
-    sqfliteFfiInit();
-    databaseFactory = databaseFactoryFfi; 
-    _bd ??= await iniciaBanco();
+    if (_bd == null) {
+      if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+        sqfliteFfiInit();
+        databaseFactory = databaseFactoryFfi;
+      }
+      _bd = await iniciaBanco();
+    }
     return _bd!;
   }
 
@@ -22,6 +27,11 @@ class BancoDados {
   }
 
   Future<Database> iniciaBanco() async {
+    if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+      sqfliteFfiInit();
+      databaseFactory = databaseFactoryFfi;
+    }
+    
     String caminho = join(await getDatabasesPath(), 'gamesTracker.db');
 
     const String scriptUser =
@@ -56,15 +66,15 @@ class BancoDados {
       'password': password
     };
     await banco.insert('user', user,
-        conflictAlgorithm: ConflictAlgorithm.replace);
-    // print("inseriu usuario");
+        conflictAlgorithm: ConflictAlgorithm.abort);
+    print("inseriu usuario");
   }
 
   Future<void> insereGenre(String nome) async {
     final banco = await bd;
     Map<String, dynamic> genre = {'name': nome};
     await banco.insert('genre', genre,
-        conflictAlgorithm: ConflictAlgorithm.replace);
+        conflictAlgorithm: ConflictAlgorithm.abort);
   }
 
   Future<void> insereGame(
@@ -77,14 +87,16 @@ class BancoDados {
       'release_date': releaseDate
     };
     await banco.insert('game', game,
-        conflictAlgorithm: ConflictAlgorithm.replace);
+        conflictAlgorithm: ConflictAlgorithm.abort);
+
+    print('insere ok');
   }
 
   Future<void> insereGameGenre(int gameId, int genreId) async {
     final banco = await bd;
     Map<String, dynamic> gameGenre = {'game_id': gameId, 'genre_id': genreId};
     await banco.insert('game_genre', gameGenre,
-        conflictAlgorithm: ConflictAlgorithm.replace);
+        conflictAlgorithm: ConflictAlgorithm.abort);
   }
 
   Future<void> insereReview(int userId, int gameId, double score,
@@ -98,7 +110,7 @@ class BancoDados {
       'date': date
     };
     await banco.insert('review', review,
-        conflictAlgorithm: ConflictAlgorithm.replace);
+        conflictAlgorithm: ConflictAlgorithm.abort);
   }
 
   // gets
@@ -117,11 +129,12 @@ class BancoDados {
     }
   }
 
-  Future<Map<String, dynamic>?> getUserNavLogin(String email, String password) async {
+  Future<Map<String, dynamic>?> getUserNavLogin(
+      String email, String password) async {
     final banco = await bd;
-    String script = 'id = ? AND name = ? AND email = ? AND password = ?';
-    List<Map<String, dynamic>> user = await banco
-        .query('user', where: script, whereArgs: [email, password]);
+    String script = 'email = ? AND password = ?';
+    List<Map<String, dynamic>> user =
+        await banco.query('user', where: script, whereArgs: [email, password]);
 
     if (user.isNotEmpty) {
       return user.first;
@@ -170,6 +183,11 @@ class BancoDados {
     }
   }
 
+  // Future<List<Map<Object, dynamic>>?> getGames(String name) async {
+  //   final banco = await bd;
+  //   String script
+  // }
+
   Future<void> deleteAllData() async {
     final db = await bd;
     await db.delete('user');
@@ -178,5 +196,5 @@ class BancoDados {
     await db.delete('game_genre');
     await db.delete('review');
     // print('Todos os dados foram excluídos de todas as tabelas.');
-}
+  }
 }

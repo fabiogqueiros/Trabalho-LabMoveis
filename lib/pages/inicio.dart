@@ -1,7 +1,6 @@
 // ignore: depend_on_referenced_packages
 import "package:shared_preferences/shared_preferences.dart";
 import 'package:flutter/material.dart';
-import 'package:sqflite/sqflite.dart';
 import '../services/BancoDeDados.dart';
 
 class Inicio extends StatefulWidget {
@@ -102,7 +101,6 @@ class _InicioState extends State<Inicio> {
           const SizedBox(height: 90.0),
           TextButton(
               onPressed: () {
-                bd.deleteAllData();
                 navEntrar(context);
               },
               style: ElevatedButton.styleFrom(
@@ -118,7 +116,6 @@ class _InicioState extends State<Inicio> {
           const SizedBox(height: 40.0),
           TextButton(
               onPressed: () {
-                bd.deleteAllData();
                 navCadastrar(context);
               },
               style: ElevatedButton.styleFrom(

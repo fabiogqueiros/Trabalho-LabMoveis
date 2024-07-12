@@ -21,47 +21,24 @@ class _CadastrarState extends State<Cadastrar> {
     if (name.text.isNotEmpty &&
         mail.text.isNotEmpty &&
         password.text.isNotEmpty) {
-      // print("aff");
       Map<String, dynamic>? resp =
           await bd.getUserLogin(name.text, mail.text, password.text);
-      // print("get funciona");
       if (resp == null) {
         await bd.insereUser(name.text, mail.text, password.text);
+        Map<String, dynamic>? resp2 =
+            await bd.getUserLogin(name.text, mail.text, password.text);
+        _save(resp2?['name'], resp2!['id'].toString());
         String title = 'Atenção!';
         if (mounted) {
           String message = 'Usuário cadastrado com sucesso!';
           // ignore: use_build_context_synchronously
-          sucesso(context, title, message);
+          alerta(context, title, message);
         } else {
           String message = 'Usuário já possui cadastro!';
-          // ignore: use_build_context_synchronously
+          //ignore: use_build_context_synchronously
           alerta(context, title, message);
         }
       }
-      // if (checaCadastro(mail.text)) {
-      //   String title = "Usuario já existente";
-      //   String message = "Email inválido";
-      //   alerta(context, title, message);
-      //   return;
-      // }
-      // bd.insereUser(name.text, mail.text, password.text);
-      // Map<String, dynamic>? retorno =
-      //     await bd.getUserLogin(name.text, mail.text, password.text);
-      // print("$retorno");
-      // Text("$retorno");
-
-      Map<String, dynamic>? resp2 =
-          await bd.getUserLogin(name.text, mail.text, password.text);
-      print("$resp2");
-      Text("$resp2");
-
-      String id = ""; //Recuperar do banco de dados o id
-      _save(name.text, id);
-    } else {
-      String title = "Campo(s) vazio(s)";
-
-      String message = "Preencha todos os campos do cadastro!";
-      alerta(context, title, message);
     }
   }
 
@@ -71,49 +48,30 @@ class _CadastrarState extends State<Cadastrar> {
     await prefs.setString("id", id);
   }
 
-  void sucesso(BuildContext context, String title, String message) {
+  void alerta(BuildContext context, String title, String message) {
     showDialog(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text(
-              title,
-              style: TextStyle(backgroundColor: Colors.black),
-            ),
-            content: Text(
-              message,
-              style: TextStyle(backgroundColor: Colors.black),
-            ),
+            title: Text(title),
+            content: Text(message),
             actions: [
               TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: const Text('OK'),
-              ),
+                  onPressed: () {
+                    Navigator.pop(context, "entrar");
+                  },
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color.fromARGB(255, 61, 2, 71),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 28.0, vertical: 12.0),
+                      textStyle: const TextStyle(fontSize: 20.0)),
+                  child: const Text("OK", style: TextStyle(color: Colors.white)))
             ],
           );
         });
-  }
-
-  void alerta(BuildContext context, String title, String message) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(title),
-          content: Text(message),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('OK'),
-            ),
-          ],
-        );
-      },
-    );
   }
 
   bool checaCadastro(String email) {
@@ -198,7 +156,6 @@ class _CadastrarState extends State<Cadastrar> {
             TextButton(
                 onPressed: () async {
                   await _cadastrar(context);
-                  Navigator.pop(context);
                 },
                 style: ElevatedButton.styleFrom(
                     backgroundColor: const Color.fromARGB(255, 61, 2, 71),

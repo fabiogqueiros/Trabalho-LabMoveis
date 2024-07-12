@@ -27,24 +27,31 @@ class _NovoJogoState extends State<NovoJogo> {
     Navigator.pop(context);
   }
 
-  void alerta(BuildContext context, String title, String message){
+  void alerta(BuildContext context, String title, String message) {
     showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(title),
-          content: Text(message),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('OK'),
-            ),
-          ],
-        );
-      },
-    );
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text(title),
+            content: Text(message),
+            actions: [
+              TextButton(
+                  onPressed: () {
+                    Navigator.pop(context, "entrar");
+                  },
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color.fromARGB(255, 61, 2, 71),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 28.0, vertical: 12.0),
+                      textStyle: const TextStyle(fontSize: 20.0)),
+                  child:
+                      const Text("OK", style: TextStyle(color: Colors.white)))
+            ],
+          );
+        });
   }
 
 
